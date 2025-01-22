@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -44,20 +45,37 @@ public class AuthController {
         String username = credentials.get("username");
         String password = credentials.get("password");
 
+        // Walidacja wejściowych danych
         if (username == null || password == null) {
             throw new RuntimeException("Username and password must not be null");
         }
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+        // Logowanie nazwy użytkownika
+        System.out.println("Szukamy użytkownika: " + username);
 
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    System.out.println("Nie znaleziono użytkownika: " + username);
+                    return new RuntimeException("Invalid username or password");
+                });
+
+        System.out.println("Znaleziono użytkownika: " + user);
+
+        // Sprawdzenie hasła
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
 
+        // Wygenerowanie tokena
         String token = jwtUtil.generateToken(username);
-        return ResponseEntity.ok(Collections.singletonMap("token", token));
+
+        // Zwrócenie tokena
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("username", username);
+        return ResponseEntity.ok(response);
     }
+
 
     //Aktualizowanie roli użytkownika
     @PutMapping("/users/{id}/role")

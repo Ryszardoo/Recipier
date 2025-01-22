@@ -56,12 +56,19 @@ public class RecipeController {
     //Dodawanie przepisu
     @PostMapping
     public RecipeDTO addRecipe(@Valid @RequestBody RecipeDTO recipeDTO) {
+        return getRecipeDTO(recipeDTO, userRepository, recipeMapper, recipeRepository);
+
+    }
+
+    public static RecipeDTO getRecipeDTO(@RequestBody @Valid RecipeDTO recipeDTO, UserRepository userRepository, RecipeMapper recipeMapper, RecipeRepository recipeRepository) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User not authenticated");
         }
 
+
         String username = authentication.getName();
+        System.out.println("Authenticated username: " + username);
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -69,7 +76,6 @@ public class RecipeController {
         recipe.setUser(currentUser);
         Recipe savedRecipe = recipeRepository.save(recipe);
         return recipeMapper.toDto(savedRecipe);
-
     }
 
 

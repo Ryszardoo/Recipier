@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.recipier.controller.RecipeController.getRecipeDTO;
+
 @Service
 public class RecipeService {
 
@@ -47,20 +49,7 @@ public class RecipeService {
 
     // Dodanie nowego przepisu
     public RecipeDTO addRecipe(RecipeDTO recipeDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated");
-        }
-
-        String username = authentication.getName();
-        User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Recipe recipe = recipeMapper.toEntity(recipeDTO);
-        recipe.setUser(currentUser);
-        Recipe savedRecipe = recipeRepository.save(recipe);
-
-        return recipeMapper.toDto(savedRecipe);
+        return getRecipeDTO(recipeDTO, userRepository, recipeMapper, recipeRepository);
     }
 
     // Aktualizacja przepisu

@@ -36,26 +36,6 @@ public class User implements UserDetails {
         return Collections.emptyList(); // Zwraca mi tu liste ról
     }
 
-    //Do innego projektu
-    @Override
-    public boolean isAccountNonExpired() {
-        return true; // Możesz wprowadzić logikę wygasania konta
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true; // Możesz wprowadzić logikę blokowania konta
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true; // Możesz wprowadzić logikę wygasania poświadczeń
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true; // Możesz wprowadzić logikę aktywacji konta
-    }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // Handles serialization of recipes

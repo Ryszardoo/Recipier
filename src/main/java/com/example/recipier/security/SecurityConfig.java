@@ -26,7 +26,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/auth/users/**").hasRole("ADMIN") // Endpoint zmiany ról tylko dla ADMIN
                                 .requestMatchers("/api/recipes/**").permitAll() // Endpointy przepisów dostepne dla wszystkich
                                 .anyRequest().authenticated()
-                )
+                        )
                 .httpBasic(AbstractHttpConfigurer::disable);
         return http.build();
     }
